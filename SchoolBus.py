@@ -54,22 +54,46 @@ def searchRecentBus(start,end):
     if start == 'z'and end=='h' and isWeekend(year,month,day):
         bus_time =z2h_time_weekend
         all=bus_all
-    if start=='h'and end=='z'and not isWeekend(year,month,day):
-        bus_time=h2z_time
-        all=h2z_all
-    if start=='h'and end=='z'and isWeekend(year,month,day):
-        bus_time=h2z_time_weekend
+    if start == 'h' and end == 'z' and not isWeekend(year, month, day):
+        bus_time = h2z_time
+        all = h2z_all
+    if start == 'h' and end == 'z' and isWeekend(year, month, day):
+        bus_time = h2z_time_weekend
+        all = bus_all
+    if start == 'f' and end == 'z' and not isWeekend(year, month, day):
+        bus_time = f2z_time
+        all = f2z_all
+    if start == 'z' and end == 'f' and not isWeekend(year, month, day):
+        bus_time = z2f_time
+        all = z2f_all
+    if start == 'f' and end == 'z' and isWeekend(year, month, day):
+        return '该方向双休日没车', None, None, bus_all
+    if start == 'z' and end == 'f' and isWeekend(year, month, day):
+        return '该方向双休日没车', None, None, bus_all
+    if start == 'j'and end=='h' and not isWeekend(year,month,day):
+        bus_time =j2h_time
+        all=j2h_all
+    if start == 'j'and end=='h' and isWeekend(year,month,day):
+        bus_time =j2h_time_weekend
         all=bus_all
-    if start=='f'and end=='z'and not isWeekend(year,month,day):
-        bus_time=f2z_time
-        all=f2z_all
-    if start=='z'and end=='f' and not isWeekend(year,month,day):
-        bus_time=z2f_time
-        all=z2f_all
-    if start=='f'and end=='z'and isWeekend(year,month,day):
-        return '该方向双休日没车',None,None,bus_all
-    if start=='z'and end=='f' and isWeekend(year,month,day):
-        return '该方向双休日没车',None,None,bus_all
+    if start == 'h'and end=='j' and not isWeekend(year,month,day):
+        bus_time =h2j_time
+        all=h2j_all
+    if start == 'h'and end=='j' and isWeekend(year,month,day):
+        bus_time =h2j_time_weekend
+        all=bus_all
+    if start == 'f' and end == 'h' and not isWeekend(year, month, day):
+        bus_time = f2h_time
+        all = f2h_all
+    if start == 'f' and end == 'h' and isWeekend(year, month, day):
+        bus_time = f2h_time_weekend
+        all = bus_all
+    if start == 'h' and end == 'f' and not isWeekend(year, month, day):
+        bus_time = h2f_time
+        all = h2f_all
+    if start == 'h' and end == 'f' and isWeekend(year, month, day):
+        bus_time = h2f_time_weekend
+        all = bus_all
 
     now=int(time.strftime("%H%M",time.localtime()))
     next_bus_count=None
@@ -131,27 +155,29 @@ def searchRecentBus(start,end):
             nextNextBus = '下下一班（{}）：'.format(next_next_bus_count) + str(int(nextNextBus[0:2])) +':'+ nextNextBus[2:4]
     return notify,nextBus,nextNextBus,all
 
-@itchat.msg_register([TEXT])
-def msg_receive(msg):
-     '''
-     :param msg:
-     :return:
-     '''
-     if re.match(u'.*校车.*',msg['Content']):
-         msg.user.send('想查询最近一班校车？请回复help进行查询。')
-     if msg['Content']=='help':
-         help=('z:张江校区'+'\n'+
-                'h:邯郸校区'+'\n'+
-                'f:枫林校区'+'\n'+
-                'j:江湾校区'+'\n'+'例如：查询张江到邯郸的最近一班校车，则回复：zh'+'\n')
-         msg.user.send(help)
-     if msg['Content'] in ['zh','hz','fz','zf','jh','hj','fh','hf']:
-        start=msg['Content'][0]
-        end=msg['Content'][1]
-        notify,nextBus,nextNextBus,all=searchRecentBus(start,end)
-        msg.user.send(notify+'\n'+nextBus+'\n'+nextNextBus+'\n'+all)
+# @itchat.msg_register([TEXT])
+# def msg_receive(msg):
+#      '''
+#      :param msg:
+#      :return:
+#      '''
+#      if re.match(u'.*校车.*',msg['Content']):
+#          msg.user.send('想查询最近一班校车？请回复help进行查询。')
+#      if msg['Content']=='help':
+#          help=('z:张江校区'+'\n'+
+#                 'h:邯郸校区'+'\n'+
+#                 'f:枫林校区'+'\n'+
+#                 'j:江湾校区'+'\n'+'例如:查询张江到邯郸的最近一班校车，则回复:zh; 查询所有班次，则回复:all.'+'\n')
+#          msg.user.send(help)
+#      if msg['Content'] == 'all':
+#         msg.user.send("所有校车班次：https://mp.weixin.qq.com/s/14J8dupUACPUJayCRdbEmw")
+#      if msg['Content'] in ['zh','hz','fz','zf','jh','hj','fh','hf']:
+#         start=msg['Content'][0]
+#         end=msg['Content'][1]
+#         notify,nextBus,nextNextBus,all=searchRecentBus(start,end)
+#         msg.user.send(notify+'\n'+nextBus+'\n'+nextNextBus+'\n'+all)
 
 # itchat.auto_login(hotReload=True)
 # itchat.run()
-itchat.auto_login(enableCmdQR=2,picDir='/root/QR.png',hotReload=False)
-itchat.run()
+# itchat.auto_login(enableCmdQR=2,picDir='/root/QR.png',hotReload=False)
+# itchat.run()
