@@ -5,6 +5,8 @@ from itchat.content import TEXT
 import time
 import re
 import datetime
+from mail import Mail
+from apscheduler.schedulers.background import BackgroundScheduler
 
 start_date = datetime.datetime(2020, 10, 12)
 day = datetime.timedelta(days=1)
@@ -207,7 +209,7 @@ def msg_receive(msg):
         if dupy_people == "":
             msg.user.send('Error.')
         else:
-            info = "今天是{}，值日人为：{}，麻烦打扫卫生间和客厅，辛苦啦❤️".format(now, dupy_people)
+            info = "今天是{}，值日人为：【{}】，麻烦打扫卫生间和客厅，辛苦啦❤️".format(now, dupy_people)
             msg.user.send(info)
 
 
@@ -233,10 +235,46 @@ def test():
                 print(k)
 
 
+group_user_name = None
+
+
+def send_duty():
+    now = datetime.datetime.now().strftime('%Y-%m-%d')
+    dupy_people = on_duty()
+    info = None
+    if dupy_people == "":
+        info = "Error."
+    else:
+        info = "今天是{}，值日人为：【{}】，麻烦打扫卫生间和客厅，辛苦啦❤️".format(now, dupy_people)
+    itchat.send_msg(info, toUserName=group_user_name)
+
+
+def get_rooms():
+    for room in itchat.get_chatrooms(update=True)[0:]:
+        UserName = room['UserName']
+        NickName = room['NickName']
+        # print('UserName:{}'.format(UserName))
+        # print('NickName:{}'.format(NickName))
+        if NickName == "test":
+            global group_user_name
+            print(group_user_name)
+            group_user_name = UserName
+            break
+    # BackgroundScheduler: 适合于要求任何在程序后台运行的情况，当希望调度器在应用后台执行时使用。
+    scheduler = BackgroundScheduler()
+    # 采用非阻塞的方式
+
+    # 采用固定时间间隔（interval）的方式，每隔3秒钟执行一次
+    scheduler.add_job(send_duty, 'cron', hour="21", minute="59")
+    # 这是一个独立的线程
+    scheduler.start()
+
+
 def main():
-    itchat.auto_login(hotReload=True)
-    itchat.run()
-    itchat.auto_login(enableCmdQR=2, picDir='QR.png', hotReload=False)
+    mail = Mail()
+    # 阿里云需要hotReload=False
+    itchat.auto_login(enableCmdQR=2, picDir='QR.png', hotReload=False, qrCallback=mail)
+    get_rooms()
     itchat.run()
 
 
