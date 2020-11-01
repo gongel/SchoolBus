@@ -5,7 +5,6 @@ from itchat.content import TEXT
 import time
 import re
 import datetime
-from mail import Mail
 from apscheduler.schedulers.background import BackgroundScheduler
 
 start_date = datetime.datetime(2020, 10, 12)
@@ -271,9 +270,8 @@ def get_rooms():
 
 
 def main():
-    mail = Mail()
     # 阿里云需要hotReload=False
-    itchat.auto_login(enableCmdQR=2, picDir='QR.png', hotReload=False, qrCallback=mail)
+    itchat.auto_login(enableCmdQR=2, picDir='QR.png', hotReload=False)
     get_rooms()
     itchat.run()
 

@@ -5,13 +5,13 @@ from email.mime.multipart import MIMEMultipart
 
 from future.backports.email.mime.text import MIMEText
 
+#
+# class Mail:
+#     def __call__(self, uuid, status, qrcode):
+#         send_QR(uuid, status, qrcode)
 
-class Mail:
-    def __call__(self, uuid, status, qrcode):
-        send_QR(uuid, status, qrcode)
 
-
-def send_QR(uuid, status, qrcode):
+def send_QR(qrcode):
     print('准备发送二维码')
     sender = '18516528861@163.com'  #
     passWord = 'gel12345'
